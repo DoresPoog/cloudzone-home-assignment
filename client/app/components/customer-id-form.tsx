@@ -4,17 +4,22 @@ import PulsingResult from './loaders/pulsing-result';
 
 interface CustomerIDFormProps {
 	prompt: string;
-	onSubmit: (id: string) => void;
+	onSubmit: (id: string) => Promise<boolean>;
 	isProcessing: boolean;
 	show?: boolean;
+	result?: any;
 }
 
-export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show }: CustomerIDFormProps) {
+export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show, result }: CustomerIDFormProps) {
   const [id, setId] = useState<string>();
 
-  function _onSubmit(event: React.FormEvent) {
+  async function _onSubmit(event: React.FormEvent) {
 	event.preventDefault();
-	onSubmit(id!);
+	const success = await onSubmit(id!);
+
+	if (success) {
+		setId('');
+	}
   }
 
   return (
@@ -40,8 +45,10 @@ export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show }:
 		  {isProcessing ? <><Spinner /> Submitting...</> : prompt}
 	  </button>
 
-	  <div className="top-0 right-0 mt-4 me-4 text-xs text-gray-500">
+	  <div className="top-0 right-0 mt-4 me-4 text-l text-white-500">
 		{isProcessing && <PulsingResult />}
+
+		{!isProcessing && result}
 	  </div>
 
 	</form>

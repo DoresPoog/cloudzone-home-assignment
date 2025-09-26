@@ -1,0 +1,1 @@
+type FormType = 'add' | 'check' | 'delete';

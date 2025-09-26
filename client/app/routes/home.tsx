@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Route } from './+types/home';
 import CustomerIDForm from '~/components/customer-id-form';
+import useCustomerIDsFetcher from '~/hooks/useCustomerIDsFetcher';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,77 +11,77 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const [selectedForm, setSelectedForm] = useState<'add' | 'check' | 'delete'>('add');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedForm, setSelectedForm] = useState<FormType>('add');
+  const fetcher = useCustomerIDsFetcher();
+  const isProcessing = fetcher.state === 'processing';
 
-  function onClickFormTab(form: 'add' | 'check' | 'delete') {
+  function onClickFormTab(form: FormType) {
+    if (isProcessing) {
+      return;
+    }
+
+    fetcher.clear();
     setSelectedForm(form);
   }
 
-  async function onSubmit(id: string) {
-    let response;
-    
-    setIsProcessing(true);
+  async function onSubmit(id: string): Promise<boolean> {
+    return fetcher.submit(selectedForm, id);
+  }
 
-    try {
-      switch (selectedForm) {
-        case 'add':
-          response = await fetch('https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }),
-          }).then(res => res.json());
+  let result = null;
 
-          if (response.success) {
-            alert(`Customer ID ${id} added successfully!`);
-          }
+  if (fetcher.error) {
+    result = (
+      <div>
+        Failed to {selectedForm} ID '{fetcher.result!.id}'.
+      </div>
+    )
+  } else if (fetcher.result) {
+    switch (selectedForm) {
+      case 'add': {
+        result = (
+          <div>
+            Customer ID '{fetcher.result.id}' added successfully!
+          </div>
+        );
 
-          break;
-        case 'check':
-          response = await fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids/${id}`).then(res => res.json());
-
-          if (response.success) {
-            if (response.result) {
-              alert(`Customer ID ${id} exists!`);
-            } else {
-              alert(`Customer ID ${id} does not exist.`);
-            }
-          }
-
-          break;
-        case 'delete':
-          response = await fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids/${id}`, {
-            method: 'DELETE',
-          }).then(res => res.json());
-
-          if (response.success) {
-            alert(`Customer ID ${id} deleted successfully!`);
-          }
-
-          break;
+        break;
       }
-    } catch (error) {
-      alert(`Error processing customer ID ${id}: ${error}`);
-    } finally {
-      setIsProcessing(false);
+      case 'check': {
+        result = (
+          <div>
+            Customer ID '{fetcher.result.id}' {fetcher.result.success ? 'exists!' : 'does not exist.'}
+          </div>
+        );
+
+        break;
+      }
+      case 'delete': {
+        result = (
+          <div>
+            Customer ID '{fetcher.result.id}' deleted successfully.
+          </div>
+        );
+
+        break;
+      }
     }
   }
 
   return (
-    <main className="flex items-center justify-center pt-16 pb-4">
+    <main className="flex items-center justify-center pt-16 pb-4 animate-fade-in">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
 
         <header className="flex flex-col items-center gap-9 text-center">
           <div className="w-[500px] max-w-[100vw] p-4">
             <h1 className="text-4xl">Customer IDs</h1>
-            <h2 className="text-2xl">By</h2>
+            {/* <h2 className="text-2xl">By</h2> */}
 
             <img
               src="https://www.cloudzone.io/wp-content/uploads/2025/08/Logo_white-1-1.png"
               alt="by CloudZone"
               width="100"
+              className="relative opacity-0 float-right mt-5 animate-fade-in-left-1-0_5s-2s"
             />
           </div>
         </header>
@@ -114,9 +115,29 @@ export default function Home() {
           </div>
 
           <div className="relative z-10 bg-gray-800 rounded-lg shadow p-6 min-h-[200px]">
-            <CustomerIDForm prompt={'Add'} isProcessing={isProcessing} onSubmit={onSubmit} show={selectedForm === 'add'} />
-            <CustomerIDForm prompt={'Check'} isProcessing={isProcessing} onSubmit={onSubmit} show={selectedForm === 'check'} />
-            <CustomerIDForm prompt={'Delete'} isProcessing={isProcessing} onSubmit={onSubmit} show={selectedForm === 'delete'} /> 
+            <CustomerIDForm
+              show={selectedForm === 'add'}
+              prompt={'Add'}
+              onSubmit={onSubmit}
+              isProcessing={isProcessing}
+              result={result}
+            />
+
+            <CustomerIDForm
+              show={selectedForm === 'check'}
+              prompt={'Check'}
+              onSubmit={onSubmit}
+              isProcessing={isProcessing}
+              result={result}
+            />
+
+            <CustomerIDForm
+              show={selectedForm === 'delete'}
+              prompt={'Delete'}
+              onSubmit={onSubmit}
+              isProcessing={isProcessing}
+              result={result}
+            /> 
           </div>
           
         </div>
