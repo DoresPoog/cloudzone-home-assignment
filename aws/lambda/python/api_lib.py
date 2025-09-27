@@ -5,10 +5,7 @@ def api_proxy_response(status_code, response_body):
         'statusCode': status_code,
         'headers': {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin' : '*',
-            'Allow' : 'POST',
-            'Access-Control-Allow-Methods' : 'POST',
-            'Access-Control-Allow-Headers' : '*'
+            'Access-Control-Allow-Origin' : '*'
         },
         'body': json.dumps(response_body)
     }

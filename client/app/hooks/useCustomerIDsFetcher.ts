@@ -16,7 +16,7 @@ export default function useCustomerIDsFetcher() {
 
 		switch (type) {
 			case 'add': {
-				response = await fetcher.fetch('https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids', {
+				response = await fetcher.fetch('https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Prod/customer-ids', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -30,14 +30,14 @@ export default function useCustomerIDsFetcher() {
 			}
 
 			case 'check': {
-				response = await fetcher.fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids/${id}`);
+				response = await fetcher.fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Prod/customer-ids/${id}`);
 				success = response && response.success && response.result;
 
 				break;
 			}
 
 			case 'delete': {
-				response = await fetcher.fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Test/customer-ids/${id}`, {
+				response = await fetcher.fetch(`https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Prod/customer-ids/${id}`, {
 					method: 'DELETE',
 				});
 
