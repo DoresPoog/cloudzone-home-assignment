@@ -64,3 +64,19 @@ All requests *MUST* include an 'X-Api-Key' header with [the relevant API Key](ht
 
 #### Response if the ID did not exist when trying to delete:
 `{ "success": false, "errors": ['id_does_not_exist'] }`
+
+<br><br>
+
+# Step Function Executions
+
+With non-existent customer ID -> Added to table:
+![image](https://i.ibb.co/1t1zryFQ/Screenshot-2025-09-28-at-7-48-11.png)
+
+Events View:
+![image](https://i.ibb.co/xKH0x1D2/Screenshot-2025-09-28-at-7-48-29.png)
+
+With existing customer ID -> Logged event:
+![image](https://i.ibb.co/yFGCMrgG/Screenshot-2025-09-28-at-7-48-48.png)
+
+Events View:
+![image](https://i.ibb.co/yBVT2ZFj/Screenshot-2025-09-28-at-7-49-01.png)
