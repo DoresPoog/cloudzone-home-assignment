@@ -2,6 +2,21 @@
 
 This project is based on the [React Router framework](https://reactrouter.com/).
 
+![image](https://i.ibb.co/99Wc7ByS/Cloud-Zone-Client-1.png)
+
+<br>
+
+## Working with the app
+
+The app allows you to add, delete, or check the existence of customer IDs.
+![image](https://i.ibb.co/fWNkVBz/Screenshot-2025-09-28-at-7-36-50.png)
+
+You will get a validation error if you try to add an ID that already exists,
+OR if you try to delete one that doesn't exist.
+
+![image](https://i.ibb.co/MDjJJ8nz/Screenshot-2025-09-28-at-7-37-46.png)
+![image](https://i.ibb.co/4gN02t6Y/Screenshot-2025-09-28-at-7-38-24.png)
+
 ## Getting Started
 
 ### Installation
