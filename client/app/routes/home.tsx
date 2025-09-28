@@ -2,6 +2,9 @@ import { useState } from 'react';
 import type { Route } from './+types/home';
 import CustomerIDForm from '~/components/customer-id-form';
 import useCustomerIDsFetcher from '~/hooks/useCustomerIDsFetcher';
+import PulsingResult from '~/components/loaders/pulsing-result';
+import SuccessAnimatedIcon from '~/components/icons/animated/success/success-animated-icon';
+import ErrorAnimatedIcon from '~/components/icons/animated/error/error-animated-icon';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -29,39 +32,35 @@ export default function Home() {
   }
 
   let result = null;
+  let ResultIcon = (!fetcher.data || !fetcher.data.success) ? ErrorAnimatedIcon : SuccessAnimatedIcon;
 
   if (fetcher.error) {
-    result = (
-      <div>
-        Failed to {selectedForm} ID '{fetcher.result!.id}'.
-      </div>
-    )
-  } else if (fetcher.result) {
+    result = `Failed to ${selectedForm} ID '${fetcher.id}'.`;
+  } else if (fetcher.data) {
+    result = `Customer ID '${fetcher.id}' `;
+
     switch (selectedForm) {
       case 'add': {
-        result = (
-          <div>
-            Customer ID '{fetcher.result.id}' added successfully!
-          </div>
-        );
+        if (fetcher.data.success) {
+          result += 'was added successfully!';
+        } else if (fetcher.data.errors.includes('id_already_exists')) {
+          result += 'already exists!';
+        } else {
+          result += 'could not be added - please try again.';
+        }
 
         break;
       }
       case 'check': {
-        result = (
-          <div>
-            Customer ID '{fetcher.result.id}' {fetcher.result.success ? 'exists!' : 'does not exist.'}
-          </div>
-        );
-
+        result += fetcher.data.result ? 'exists!' : 'does not exist.';
         break;
       }
       case 'delete': {
-        result = (
-          <div>
-            Customer ID '{fetcher.result.id}' deleted successfully.
-          </div>
-        );
+        if (fetcher.data.success) {
+          result += 'deleted successfully.';
+        } else if (fetcher.data.errors.includes('id_does_not_exist')) {
+          result += 'does not exist.';
+        }
 
         break;
       }
@@ -69,21 +68,10 @@ export default function Home() {
   }
 
   return (
-    <main className="flex items-center justify-center pt-16 pb-4 animate-fade-in">
-      <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
+    <main className="flex flex-col items-center gap-16 min-h-0 w-[500px] m-auto justify-center mt-[150px] pb-4 animate-fade-in">
 
         <header className="flex flex-col items-center gap-9 text-center">
-          <div className="w-[500px] max-w-[100vw] p-4">
-            <h1 className="text-4xl">Customer IDs</h1>
-            {/* <h2 className="text-2xl">By</h2> */}
-
-            <img
-              src="https://www.cloudzone.io/wp-content/uploads/2025/08/Logo_white-1-1.png"
-              alt="by CloudZone"
-              width="100"
-              className="relative opacity-0 float-right mt-5 animate-fade-in-left-1-0_5s-2s"
-            />
-          </div>
+          <h1 className="text-4xl">Customer IDs</h1>
         </header>
 
         <div className="relative z-10 max-w-[500px] w-full space-y-6 px-4">
@@ -120,7 +108,6 @@ export default function Home() {
               prompt={'Add'}
               onSubmit={onSubmit}
               isProcessing={isProcessing}
-              result={result}
             />
 
             <CustomerIDForm
@@ -128,7 +115,6 @@ export default function Home() {
               prompt={'Check'}
               onSubmit={onSubmit}
               isProcessing={isProcessing}
-              result={result}
             />
 
             <CustomerIDForm
@@ -136,13 +122,33 @@ export default function Home() {
               prompt={'Delete'}
               onSubmit={onSubmit}
               isProcessing={isProcessing}
-              result={result}
             /> 
           </div>
           
         </div>
+
+        <div className="w-[80%] h-[100px]">
+          <span className="block mb-[20px] text-2xl">Result</span>
+          <div className="text-l text-white-500">
+            {isProcessing && <PulsingResult />}
+
+            {(!isProcessing && result) ? <div className="flex items-center gap-1 pl-3">
+                <ResultIcon className="w-[33px] inline-block" />
+                <span>{result}</span>
+              </div> : null
+            }
+          </div>
+        </div>
+
+        <div className="relative z-10 max-w-[500px] w-full space-y-6 px-4">
+          <img
+            src="https://www.cloudzone.io/wp-content/uploads/2025/08/Logo_white-1-1.png"
+            alt="by CloudZone"
+            width="100"
+            className="relative opacity-0 float-right mt-5 animate-fade-in-left-1-0_5s-2s"
+          />
+        </div>
         
-      </div>
     </main>
   );
 }

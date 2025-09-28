@@ -7,10 +7,9 @@ interface CustomerIDFormProps {
 	onSubmit: (id: string) => Promise<boolean>;
 	isProcessing: boolean;
 	show?: boolean;
-	result?: any;
 }
 
-export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show, result }: CustomerIDFormProps) {
+export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show }: CustomerIDFormProps) {
   const [id, setId] = useState<string>();
 
   async function _onSubmit(event: React.FormEvent) {
@@ -44,12 +43,6 @@ export default function CustomerIDForm({ prompt, onSubmit, isProcessing, show, r
 		className="cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:border-gray-200 disabled:text-grey-500 disabled:shadow-none disabled:hover:bg-blue-700 disabled:cursor-default">
 		  {isProcessing ? <><Spinner /> Submitting...</> : prompt}
 	  </button>
-
-	  <div className="top-0 right-0 mt-4 me-4 text-l text-white-500">
-		{isProcessing && <PulsingResult />}
-
-		{!isProcessing && result}
-	  </div>
 
 	</form>
   );
