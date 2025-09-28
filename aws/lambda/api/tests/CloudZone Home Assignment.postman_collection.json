@@ -7,6 +7,43 @@
 	},
 	"item": [
 		{
+			"name": "Delete ID - Clean Test Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://jpvwzuxjgf.execute-api.il-central-1.amazonaws.com/Prod/customer-ids/137824596",
+					"protocol": "https",
+					"host": [
+						"jpvwzuxjgf",
+						"execute-api",
+						"il-central-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"customer-ids",
+						"137824596"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get ID - Null result",
 			"event": [
 				{
